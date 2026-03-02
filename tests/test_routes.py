@@ -139,25 +139,26 @@ class TestAccountService(TestCase):
     # --- UPDATE TESTS (PLACEHOLDER) ---
     def test_update_account(self):
         """It should Update an existing Account"""
-        # 1. Konto erstellen
+        # 1. Create an account to update
         test_account = AccountFactory()
         resp = self.client.post(BASE_URL, json=test_account.serialize())
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
-        # 2. Daten ändern
+        # 2. Change the data
         new_account = resp.get_json()
         new_account["name"] = "Updated Name"
         
-        # 3. PUT Request senden
+        # 3. Send the PUT request to /accounts/{id}
         resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         
-        # 4. Überprüfen
+        # 4. Assert the name was actually updated
         updated_account = resp.get_json()
         self.assertEqual(updated_account["name"], "Updated Name")
 
     def test_update_account_not_found(self):
         """It should not Update an Account that is not found"""
+        # Attempt to update ID 0, which shouldn't exist
         resp = self.client.put(f"{BASE_URL}/0", json={})
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
