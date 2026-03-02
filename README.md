@@ -7,6 +7,7 @@ This repository contains the starter code for the project in [**IBM-CD0285EN-Ski
 
 ## About
 Project name: devops-capstone-project
+
 Brief description: apply many of the technologies and concepts learned in the preceding courses to build and deliver a fully functional Customer Accounts microservice.
 
 ## Usage
