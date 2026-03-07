@@ -20,6 +20,7 @@ DATABASE_URI = os.getenv(
 BASE_URL = "/accounts"
 HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 
+
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
@@ -41,7 +42,7 @@ class TestAccountService(TestCase):
 
     def setUp(self):
         """Runs before each test"""
-        db.session.query(Account).delete()   # clean up the last tests
+        db.session.query(Account).delete()  # clean up the last tests
         db.session.commit()
         self.client = app.test_client()
 
@@ -137,7 +138,7 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual(len(data), 5)
 
-    # --- UPDATE TESTS (PLACEHOLDER) ---
+    # --- UPDATE TESTS ---
     def test_update_account(self):
         """It should Update an existing Account"""
         # 1. Create an account to update
@@ -163,7 +164,7 @@ class TestAccountService(TestCase):
         resp = self.client.put(f"{BASE_URL}/0", json={})
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-    # --- DELETE TESTS (PLACEHOLDER) ---
+    # --- DELETE TESTS ---
     def test_delete_account(self):
         """It should Delete an Account"""
         # 1. Create an account to delete
@@ -186,7 +187,7 @@ class TestAccountService(TestCase):
         headers = {
             'X-Frame-Options': 'SAMEORIGIN',
             'X-Content-Type-Options': 'nosniff',
-            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Content-Security-Policy': "default-src 'self'; object-src 'none'",
             'Referrer-Policy': 'strict-origin-when-cross-origin'
         }
         for key, value in headers.items():
@@ -198,3 +199,4 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Check for the CORS header
         self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
+        
