@@ -20,6 +20,7 @@ DATABASE_URI = os.getenv(
 BASE_URL = "/accounts"
 HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 
+
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
@@ -41,7 +42,7 @@ class TestAccountService(TestCase):
 
     def setUp(self):
         """Runs before each test"""
-        db.session.query(Account).delete() # clean up the last tests
+        db.session.query(Account).delete()  # clean up the last tests
         db.session.commit()
         self.client = app.test_client()
 
@@ -114,7 +115,6 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    # --- READ TESTS ---
     def test_get_account(self):
         """It should Read a single Account"""
         account = self._create_accounts(1)[0]
@@ -128,7 +128,6 @@ class TestAccountService(TestCase):
         resp = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-    # --- LIST TESTS ---
     def test_get_account_list(self):
         """It should Get a list of Accounts"""
         self._create_accounts(5)
@@ -137,45 +136,28 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual(len(data), 5)
 
-    # --- UPDATE TESTS (PLACEHOLDER) ---
     def test_update_account(self):
         """It should Update an existing Account"""
-        # 1. Create an account to update
         test_account = AccountFactory()
         resp = self.client.post(BASE_URL, json=test_account.serialize())
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-
-        # 2. Change the data
         new_account = resp.get_json()
         new_account["name"] = "Updated Name"
-        
-        # 3. Send the PUT request to /accounts/{id}
         resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        
-        # 4. Assert the name was actually updated
         updated_account = resp.get_json()
         self.assertEqual(updated_account["name"], "Updated Name")
 
     def test_update_account_not_found(self):
         """It should not Update an Account that is not found"""
-        # Attempt to update ID 0, which shouldn't exist
         resp = self.client.put(f"{BASE_URL}/0", json={})
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-    # --- DELETE TESTS (PLACEHOLDER) ---
     def test_delete_account(self):
         """It should Delete an Account"""
-        # 1. Create an account to delete
         account = self._create_accounts(1)[0]
-        
-        # 2. Send the DELETE request
         resp = self.client.delete(f"{BASE_URL}/{account.id}")
-        
-        # 3. Assert the status code is 204 NO CONTENT
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        
-        # 4. Verify it's really gone by trying to GET it
         resp = self.client.get(f"{BASE_URL}/{account.id}")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -186,7 +168,7 @@ class TestAccountService(TestCase):
         headers = {
             'X-Frame-Options': 'SAMEORIGIN',
             'X-Content-Type-Options': 'nosniff',
-            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Content-Security-Policy': "default-src 'self'; object-src 'none'",
             'Referrer-Policy': 'strict-origin-when-cross-origin'
         }
         for key, value in headers.items():
@@ -196,5 +178,5 @@ class TestAccountService(TestCase):
         """It should return a CORS header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Check for the CORS header
         self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
+        
