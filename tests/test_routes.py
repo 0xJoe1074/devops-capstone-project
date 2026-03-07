@@ -23,7 +23,7 @@ HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class TestAccountService(TestCase):
+ class TestAccountService(TestCase):
     """Account Service Tests"""
 
     @classmethod
@@ -41,7 +41,7 @@ class TestAccountService(TestCase):
 
     def setUp(self):
         """Runs before each test"""
-        db.session.query(Account).delete() # clean up the last tests
+        db.session.query(Account).delete()   # clean up the last tests
         db.session.commit()
         self.client = app.test_client()
 
@@ -148,11 +148,11 @@ class TestAccountService(TestCase):
         # 2. Change the data
         new_account = resp.get_json()
         new_account["name"] = "Updated Name"
-        
+
         # 3. Send the PUT request to /accounts/{id}
         resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        
+
         # 4. Assert the name was actually updated
         updated_account = resp.get_json()
         self.assertEqual(updated_account["name"], "Updated Name")
@@ -168,13 +168,13 @@ class TestAccountService(TestCase):
         """It should Delete an Account"""
         # 1. Create an account to delete
         account = self._create_accounts(1)[0]
-        
+
         # 2. Send the DELETE request
         resp = self.client.delete(f"{BASE_URL}/{account.id}")
-        
+
         # 3. Assert the status code is 204 NO CONTENT
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        
+
         # 4. Verify it's really gone by trying to GET it
         resp = self.client.get(f"{BASE_URL}/{account.id}")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
